@@ -23,33 +23,35 @@ interface Product {
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5025",
   headers: {
-    "Content-Type": "application/json" // Set your desired headers
-  }
+    "Content-Type": "application/json", // Set your desired headers
+  },
 });
-
 
 let initialProducts: Product[] = [
   {
-    name: 'Mercedes',
-    description: 'Luxury car',
+    name: "Mercedes",
+    description: "Luxury car",
     price: 100000,
-    image: 'https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg',
-    id: '1'
+    image:
+      "https://akm-img-a-in.tosshub.com/indiatoday/images/bodyeditor/202108/Mercedes-AMG_GLE_63_S_4Matic_f-x675.jpg?kv4Bg1gOP4fv9efHCjkbgi80orUczNG.?size=750:*",
+    id: "1",
   },
   {
-    name: 'BMW',
-    description: 'Luxury car',
+    name: "BMW",
+    description: "Luxury car",
     price: 100000,
-    image: 'https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg',
-    id: '2'
+    image:
+      "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?cs=srgb&dl=pexels-mikebirdy-170811.jpg&fm=jpg",
+    id: "2",
   },
   {
-    name: 'Lamborghini',
-    description: 'Luxury car',
+    name: "Lamborghini",
+    description: "Luxury car",
     price: 100000,
-    image: 'https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg',
-    id: '3'
-  }
+    image:
+      "https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg",
+    id: "3",
+  },
 ];
 
 export default function Products() {
@@ -59,22 +61,27 @@ export default function Products() {
   const [image, setImage] = useState("");
   const [price, setPrice] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const loadProducts = () => {
-    axiosInstance.get<Product[]>("/api/products").then((res) => setProducts(res.data)).catch(err => console.log(err));
+    axiosInstance
+      .get<Product[]>("/api/products")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.log(err));
   };
 
   useEffect(loadProducts, []);
 
   const handleAdd = async () => {
     if (!name.trim()) return;
-    await axiosInstance.post<Product>("/api/products", {
-      name,
-      description,
-      image,
-      price,
-    }).catch(err => console.log(err));
+    await axiosInstance
+      .post<Product>("/api/products", {
+        name,
+        description,
+        image,
+        price,
+      })
+      .catch((err) => console.log(err));
     setName("");
     setDescription("");
     setImage("");
@@ -83,7 +90,9 @@ export default function Products() {
   };
 
   const handleDelete = async (id: string) => {
-    await axiosInstance.delete(`/api/products/${id}`).catch(err => console.log(err));
+    await axiosInstance
+      .delete(`/api/products/${id}`)
+      .catch((err) => console.log(err));
     loadProducts();
   };
 
@@ -136,7 +145,7 @@ export default function Products() {
             <Box onClick={() => navigate(`/products/${product.id}`)}>
               <img
                 alt="sell"
-                src="/images/sell.jpg"
+                src={product.image}
                 style={{ width: "100%", display: "block" }}
               />
               <Typography variant="subtitle1" fontWeight={600}>
@@ -151,6 +160,10 @@ export default function Products() {
                   {product.description}
                 </Typography>
               )}
+
+              <Typography variant="body2" color="text.secondary">
+                contact: <a href="tel:+01-4161767762">01-4161767762</a>
+              </Typography>
             </Box>
           </ListItem>
         ))}

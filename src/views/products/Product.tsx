@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Card, CardContent, Divider, Link } from "@mui/material";
 import { useParams } from "react-router-dom";
+import PhoneIcon from '@mui/icons-material/Phone';
 
 interface Product {
   id: string;
@@ -11,29 +12,26 @@ interface Product {
   price: number;
 }
 
-let initialProducts: Product[] = [
+const initialProducts: Product[] = [
   {
     name: "Mercedes",
     description: "Luxury car",
     price: 100000,
-    image:
-      "https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg",
+    image: "https://akm-img-a-in.tosshub.com/indiatoday/images/bodyeditor/202108/Mercedes-AMG_GLE_63_S_4Matic_f-x675.jpg?kv4Bg1gOP4fv9efHCjkbgi80orUczNG.?size=750:*",
     id: "1",
   },
   {
     name: "BMW",
     description: "Luxury car",
     price: 100000,
-    image:
-      "https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg",
+    image: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?cs=srgb&dl=pexels-mikebirdy-170811.jpg&fm=jpg",
     id: "2",
   },
   {
     name: "Lamborghini",
     description: "Luxury car",
     price: 100000,
-    image:
-      "https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg",
+    image: "https://assets.gqindia.com/photos/6644932501e2ecdaa5138025/master/w_1600,c_limit/Bugatti-Divo.jpg",
     id: "3",
   },
 ];
@@ -41,34 +39,28 @@ let initialProducts: Product[] = [
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5025",
   headers: {
-    "Content-Type": "application/json", // Set your desired headers
+    "Content-Type": "application/json",
   },
 });
-const headerStyle = { fontWeight: 600 };
 
 export default function Products() {
   const [product, setProduct] = useState<Product>();
-
   const params = useParams();
 
-  const loadProduct = () => {
+  useEffect(() => {
     axiosInstance
       .get<Product>(`/api/product/${params.id}`)
       .then((res) => setProduct(res.data))
-      .catch((err) => {
-        const foundProduct = initialProducts.find(
-          (prod) => prod.id === params.id
-        );
-        if (foundProduct) setProduct(foundProduct);
+      .catch(() => {
+        const fallback = initialProducts.find(p => p.id === params.id);
+        if (fallback) setProduct(fallback);
       });
-  };
-
-  useEffect(loadProduct, []);
+  }, []);
 
   if (!product) {
     return (
-      <Box>
-        <Typography color="red" variant="subtitle1" fontWeight={600}>
+      <Box p={4}>
+        <Typography color="error" variant="h6">
           Product not found
         </Typography>
       </Box>
@@ -76,22 +68,41 @@ export default function Products() {
   }
 
   return (
-    <Box>
-      <img
-        alt="sell"
-        src={product.image}
-        style={{ width: "100%", display: "block", objectFit: "cover", height: '500px' }}
-      />
-      <header style={headerStyle}>{product.name}</header>
+    <Box maxWidth="800px" mx="auto" mt={4}>
+      <Card>
+        <img
+          alt={product.name}
+          src={product.image}
+          style={{ width: "100%", height: "400px", objectFit: "cover", borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+        />
+        <CardContent>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            {product.name}
+          </Typography>
 
-      <Typography variant="subtitle2" fontWeight={600}>
-       Price: {product.price}
-      </Typography>
-      {product.description && (
-        <Typography variant="body2" color="text.secondary">
-         {product.description}
-        </Typography>
-      )}
+          <Typography variant="h6" color="primary" fontWeight={700} gutterBottom>
+            ${product.price.toLocaleString()}
+          </Typography>
+
+          {product.description && (
+            <Typography variant="body1" color="text.secondary" paragraph>
+              {product.description}
+            </Typography>
+          )}
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box display="flex" alignItems="center" gap={1}>
+            <PhoneIcon color="action" />
+            <Typography variant="body2" color="text.secondary">
+              Get In Touch:{" "}
+              <Link href="tel:+01-4161767762" underline="hover">
+                01-4161767762
+              </Link>
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 }
