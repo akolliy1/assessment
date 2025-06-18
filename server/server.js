@@ -1,16 +1,21 @@
 const express = require('express');
 const path = require('path');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
 // Init Middleware
 app.use(express.json());
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Define Routes
 app.use('/api/users', require('./server/routes/api/users'));
 app.use('/api/auth', require('./server/routes/api/auth'));
 app.use('/api/profile', require('./server/routes/api/profile'));
 app.use('/api/posts', require('./server/routes/api/posts'));
+app.use('/api/products', require('./server/routes/api/products'));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
